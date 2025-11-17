@@ -126,6 +126,36 @@ if (contactForm) {
     });
 }
 
+// Scroll education section to show the last (most recent) item by default
+function scrollEducationToEnd() {
+    const educationFlex = document.querySelector('.education-flex');
+    if (educationFlex) {
+        // Use setTimeout to ensure the layout is complete
+        setTimeout(() => {
+            educationFlex.scrollLeft = educationFlex.scrollWidth;
+        }, 100);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    scrollEducationToEnd();
+    
+    // Also scroll when the education section comes into view
+    const educationSection = document.querySelector('.education');
+    if (educationSection) {
+        const educationObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    scrollEducationToEnd();
+                    educationObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        educationObserver.observe(educationSection);
+    }
+});
+
 // Intersection Observer for fade-in animations
 const observerOptions = {
     threshold: 0.1,
