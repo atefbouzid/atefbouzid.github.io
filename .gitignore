@@ -1,0 +1,22 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Note: config.js is NOT ignored because EmailJS public keys are safe to be public
+# config.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+
+
+DEPLOYMENT.md
