@@ -227,8 +227,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 fallback.style.display = 'none';
             }
         });
-    });
+    }); // End skillIcons forEach
+
+    // Verify CV availability and date
+    checkCVStatus();
 });
+
+// Check CV Status
+async function checkCVStatus() {
+    const cvPath = 'cv/CV_Atef_Bouzid.pdf';
+    const updateInfo = document.querySelector('.cv-update-info');
+    const cvButton = document.querySelector('.btn-cv');
+
+    if (!updateInfo) return;
+
+    try {
+        const response = await fetch(cvPath, { method: 'HEAD' });
+
+        if (response.ok) {
+            const lastModified = response.headers.get('Last-Modified');
+            if (lastModified) {
+                const date = new Date(lastModified);
+                const formattedDate = date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+                updateInfo.textContent = `Last updated: ${formattedDate}`;
+            } else {
+                updateInfo.textContent = 'Last updated: Available';
+            }
+        } else {
+            updateInfo.textContent = 'CV not available';
+            if (cvButton) {
+                cvButton.style.opacity = '0.5';
+                cvButton.style.pointerEvents = 'none';
+                cvButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    CV Not Available
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('Error checking CV status:', error);
+        updateInfo.textContent = 'CV status unknown';
+    }
+}
 
 // GitHub API Integration - get projects directly from github (no custom projects)
 async function fetchGitHubProjects() {
