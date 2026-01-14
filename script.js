@@ -1,11 +1,30 @@
+// Theme Toggle
+const themeToggle = document.getElementById('themeToggle');
+const htmlElement = document.documentElement;
+
+// Check for saved theme preference or default to dark
+const currentTheme = localStorage.getItem('theme') || 'dark';
+htmlElement.setAttribute('data-theme', currentTheme);
+
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = htmlElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        htmlElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+}
+
 // Mobile Navigation Toggle
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
+if (hamburger) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
 
 // Close mobile menu when clicking on a link
 document.querySelectorAll('.nav-link').forEach(link => {
@@ -63,7 +82,7 @@ window.addEventListener('scroll', () => {
 });
 
 // Initialize EmailJS
-(function() {
+(function () {
     if (typeof EMAILJS_CONFIG !== 'undefined' && EMAILJS_CONFIG.PUBLIC_KEY) {
         emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
     } else {
@@ -78,23 +97,23 @@ const formStatus = document.getElementById('form-status');
 if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         // Check if EmailJS is configured
-        if (typeof EMAILJS_CONFIG === 'undefined' || 
-            !EMAILJS_CONFIG.PUBLIC_KEY || 
-            !EMAILJS_CONFIG.SERVICE_ID || 
+        if (typeof EMAILJS_CONFIG === 'undefined' ||
+            !EMAILJS_CONFIG.PUBLIC_KEY ||
+            !EMAILJS_CONFIG.SERVICE_ID ||
             !EMAILJS_CONFIG.TEMPLATE_ID) {
             formStatus.className = 'form-status error';
             formStatus.textContent = 'Email service not configured. Please contact me directly at atef.bouzid@outlook.com';
             formStatus.style.display = 'block';
             return;
         }
-        
+
         // Show sending status
         formStatus.className = 'form-status sending';
         formStatus.textContent = 'Sending message...';
         formStatus.style.display = 'block';
-        
+
         // Get form values
         const formData = {
             from_name: document.getElementById('name').value,
@@ -103,26 +122,26 @@ if (contactForm) {
             message: document.getElementById('message').value,
             to_email: 'atef.bouzid@outlook.com'
         };
-        
+
         // Send email using EmailJS
         emailjs.send(EMAILJS_CONFIG.SERVICE_ID, EMAILJS_CONFIG.TEMPLATE_ID, formData)
-        .then(() => {
-            // Success
-            formStatus.className = 'form-status success';
-            formStatus.textContent = 'Message sent successfully! I\'ll get back to you soon.';
-            contactForm.reset();
-            
-            // Hide status after 5 seconds
-            setTimeout(() => {
-                formStatus.style.display = 'none';
-            }, 5000);
-        })
-        .catch((error) => {
-            // Error
-            formStatus.className = 'form-status error';
-            formStatus.textContent = 'Failed to send message. Please try again or contact me directly at atef.bouzid@outlook.com';
-            console.error('EmailJS Error:', error);
-        });
+            .then(() => {
+                // Success
+                formStatus.className = 'form-status success';
+                formStatus.textContent = 'Message sent successfully! I\'ll get back to you soon.';
+                contactForm.reset();
+
+                // Hide status after 5 seconds
+                setTimeout(() => {
+                    formStatus.style.display = 'none';
+                }, 5000);
+            })
+            .catch((error) => {
+                // Error
+                formStatus.className = 'form-status error';
+                formStatus.textContent = 'Failed to send message. Please try again or contact me directly at atef.bouzid@outlook.com';
+                console.error('EmailJS Error:', error);
+            });
     });
 }
 
@@ -139,7 +158,7 @@ function scrollEducationToEnd() {
 
 document.addEventListener('DOMContentLoaded', () => {
     scrollEducationToEnd();
-    
+
     // Also scroll when the education section comes into view
     const educationSection = document.querySelector('.education');
     if (educationSection) {
@@ -151,14 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }, { threshold: 0.1 });
-        
+
         educationObserver.observe(educationSection);
     }
 });
 
-// Intersection Observer for fade-in animations
+// Intersection Observer for fade-in animations (inspired by featured projects snippet)
 const observerOptions = {
-    threshold: 0.1,
+    threshold: 0.15,
     rootMargin: '0px 0px -50px 0px'
 };
 
@@ -167,6 +186,8 @@ const observer = new IntersectionObserver((entries) => {
         if (entry.isIntersecting) {
             entry.target.style.opacity = '1';
             entry.target.style.transform = 'translateY(0)';
+            // Only animate once per element
+            observer.unobserve(entry.target);
         }
     });
 }, observerOptions);
@@ -175,13 +196,13 @@ const observer = new IntersectionObserver((entries) => {
 document.addEventListener('DOMContentLoaded', () => {
     const projectImages = document.querySelectorAll('.project-image img');
     projectImages.forEach(img => {
-        img.addEventListener('load', function() {
+        img.addEventListener('load', function () {
             const placeholder = this.nextElementSibling;
             if (placeholder && placeholder.classList.contains('project-placeholder')) {
                 placeholder.style.display = 'none';
             }
         });
-        img.addEventListener('error', function() {
+        img.addEventListener('error', function () {
             this.style.display = 'none';
             const placeholder = this.nextElementSibling;
             if (placeholder && placeholder.classList.contains('project-placeholder')) {
@@ -193,48 +214,204 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle skill icons - show fallback if image fails to load
     const skillIcons = document.querySelectorAll('.skill-icon img');
     skillIcons.forEach(img => {
-        img.addEventListener('error', function() {
+        img.addEventListener('error', function () {
             this.style.display = 'none';
             const fallback = this.nextElementSibling;
             if (fallback && fallback.classList.contains('skill-fallback')) {
                 fallback.style.display = 'block';
             }
         });
-        img.addEventListener('load', function() {
+        img.addEventListener('load', function () {
             const fallback = this.nextElementSibling;
             if (fallback && fallback.classList.contains('skill-fallback')) {
                 fallback.style.display = 'none';
             }
         });
     });
-
-    const animateElements = document.querySelectorAll('.project-card, .skill-category-box, .stat-item, .achievement-card, .education-card');
-    animateElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
 });
 
-// Add typing effect to hero title (optional enhancement)
-function typeWriter(element, text, speed = 100) {
-    let i = 0;
-    element.innerHTML = '';
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
+// GitHub API Integration - get projects directly from github (no custom projects)
+async function fetchGitHubProjects() {
+    const username = 'atefbouzid';
+    const projectsGrid = document.querySelector('.projects-grid');
+    if (!projectsGrid) return;
+
+    try {
+        // Fetch all repos. We sort manually later to ensure Star count is the primary factor.
+        const response = await fetch(
+            `https://api.github.com/users/${username}/repos?per_page=100&type=all`
+        );
+        if (!response.ok) throw new Error('GitHub API failed');
+        const repos = await response.json();
+
+        // Filter: 1. Not portfolio repo. 2. Must have 'public' in topics.
+        const filteredRepos = repos.filter(repo =>
+            repo.name !== `${username}.github.io` &&
+            repo.topics && repo.topics.includes('public')
+        );
+
+        // Sort by Stars (Descending)
+        filteredRepos.sort((a, b) => b.stargazers_count - a.stargazers_count);
+
+        // Display matching projects
+        filteredRepos.forEach(repo => {
+            createProjectCard(repo.name, repo, projectsGrid);
+        });
+
+    } catch (error) {
+        console.error('Error fetching GitHub projects:', error);
     }
-    type();
 }
 
-// Uncomment to enable typing effect
-// window.addEventListener('load', () => {
-//     const heroTitle = document.querySelector('.hero-title');
-//     const originalText = heroTitle.textContent;
-//     typeWriter(heroTitle, originalText, 50);
-// });
+function createProjectCard(repoName, repo, container) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+
+    // Determine image - fallback to GitHub OpenGraph preview
+    let imageHtml = '';
+    const imagePath = repo
+        ? `https://opengraph.githubassets.com/1/${repo.owner.login}/${repo.name}`
+        : null;
+    const displayName = repoName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+    if (imagePath) {
+        imageHtml = `
+            <div class="project-image">
+                <img src="${imagePath}" alt="${displayName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="project-placeholder" style="display:none; background: ${getRandomGradient(repoName)}">${displayName}</div>
+            </div>`;
+    } else {
+        imageHtml = `
+            <div class="project-image">
+                <div class="project-placeholder" style="background: ${getRandomGradient(repoName)}">
+                    ${displayName}
+                </div>
+            </div>`;
+    }
+
+    // Use GitHub description
+    const description = repo?.description || 'No description available.';
+
+    // Filter Tags: Include ALL tags EXCEPT 'public' and 'demo'
+    // Also include language if not already in topics
+    let displayTags = [];
+
+    if (repo?.topics) {
+        const excludedTags = ['public', 'demo'];
+        displayTags = repo.topics.filter(tag => !excludedTags.includes(tag));
+    }
+
+    // Add primary language if it's not in the filtered topics (case-insensitive check)
+    if (repo?.language && !displayTags.some(t => t.toLowerCase() === repo.language.toLowerCase())) {
+        displayTags.unshift(repo.language);
+    }
+
+    const tagsHtml = displayTags.map(tag => `<span>${tag}</span>`).join('');
+
+    // Check for 'demo' tag to show Demo button
+    const hasDemoTag = repo?.topics && repo.topics.includes('demo');
+    const showDemoButton = hasDemoTag && repo?.homepage;
+
+    const githubUrl = repo?.html_url || '#';
+
+    // Star Count
+    const starHtml = repo?.stargazers_count > 0
+        ? `<div class="project-star">⭐ ${repo.stargazers_count}</div>`
+        : '';
+
+    // Creation Date
+    const creationDate = repo?.created_at
+        ? new Date(repo.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+        : '';
+    const dateHtml = creationDate ? `<span class="project-date" style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 0.5rem;">${creationDate}</span>` : '';
+
+    card.innerHTML = `
+        ${starHtml}
+        ${imageHtml}
+        <div class="project-content">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <h3>${displayName}</h3>
+                ${dateHtml}
+            </div>
+            <p>${description}</p>
+            <div class="project-tags">
+                ${tagsHtml}
+            </div>
+            <div class="project-links">
+                ${showDemoButton ? `<a href="${repo.homepage}" target="_blank" rel="noopener" class="project-link project-demo">View Demo</a>` : ''}
+                <a href="${githubUrl}" target="_blank" rel="noopener" class="project-link">View on GitHub</a>
+            </div>
+        </div>
+    `;
+
+    // Animation handling
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+    container.appendChild(card);
+
+    // Observe for animation after a short delay
+    setTimeout(() => {
+        if (typeof observer !== 'undefined') {
+            observer.observe(card);
+        } else {
+            // Fallback: just show the card
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }
+    }, 100);
+}
+
+function getRandomGradient(name) {
+    const colors = [
+        ['#ef4444', '#f87171'],
+        ['#3b82f6', '#60a5fa'],
+        ['#10b981', '#34d399'],
+        ['#f59e0b', '#fbbf24'],
+        ['#8b5cf6', '#a78bfa'],
+        ['#ec4899', '#f472b6']
+    ];
+    // Use name hash to pick consistent color
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % colors.length;
+    return `linear-gradient(135deg, ${colors[index][0]}, ${colors[index][1]})`;
+}
+
+// Handle project images - hide placeholder when image loads successfully
+document.addEventListener('DOMContentLoaded', () => {
+    // Clear existing static projects and fetch from GitHub
+    const projectsGrid = document.querySelector('.projects-grid');
+    if (projectsGrid) {
+        // Remove static project cards but keep achievements
+        const staticProjects = projectsGrid.querySelectorAll('.project-card');
+        staticProjects.forEach(card => card.remove());
+
+        // Fetch and display GitHub projects
+        fetchGitHubProjects();
+    }
+
+    // Handle image loading for dynamically added projects
+    setTimeout(() => {
+        const projectImages = document.querySelectorAll('.project-image img');
+        projectImages.forEach(img => {
+            img.addEventListener('load', function () {
+                const placeholder = this.nextElementSibling;
+                if (placeholder && placeholder.classList.contains('project-placeholder')) {
+                    placeholder.style.display = 'none';
+                }
+            });
+            img.addEventListener('error', function () {
+                this.style.display = 'none';
+                const placeholder = this.nextElementSibling;
+                if (placeholder && placeholder.classList.contains('project-placeholder')) {
+                    placeholder.style.display = 'flex';
+                }
+            });
+        });
+    }, 500);
+});
 
