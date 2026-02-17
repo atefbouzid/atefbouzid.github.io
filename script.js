@@ -227,52 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 fallback.style.display = 'none';
             }
         });
-    }); // End skillIcons forEach
-
-    // Verify CV availability and date
-    checkCVStatus();
+    });
 });
-
-// Check CV Status
-async function checkCVStatus() {
-    const cvPath = 'cv/CV_Atef_Bouzid.pdf';
-    const updateInfo = document.querySelector('.cv-update-info');
-    const cvButton = document.querySelector('.btn-cv');
-
-    if (!updateInfo) return;
-
-    try {
-        const response = await fetch(cvPath, { method: 'HEAD' });
-
-        if (response.ok) {
-            const lastModified = response.headers.get('Last-Modified');
-            if (lastModified) {
-                const date = new Date(lastModified);
-                const formattedDate = date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-                updateInfo.textContent = `Last updated: ${formattedDate}`;
-            } else {
-                updateInfo.textContent = 'Last updated: Available';
-            }
-        } else {
-            updateInfo.textContent = 'CV not available';
-            if (cvButton) {
-                cvButton.style.opacity = '0.5';
-                cvButton.style.pointerEvents = 'none';
-                cvButton.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                    </svg>
-                    CV Not Available
-                `;
-            }
-        }
-    } catch (error) {
-        console.error('Error checking CV status:', error);
-        updateInfo.textContent = 'CV status unknown';
-    }
-}
 
 // GitHub API Integration - get projects directly from github (no custom projects)
 async function fetchGitHubProjects() {
@@ -281,24 +237,29 @@ async function fetchGitHubProjects() {
     if (!projectsGrid) return;
 
     try {
-        // Fetch all repos. We sort manually later to ensure Star count is the primary factor.
+        // Request topics as well (so tags are available)
         const response = await fetch(
-            `https://api.github.com/users/${username}/repos?per_page=100&type=all`
+            `https://api.github.com/users/${username}/repos?sort=updated&per_page=30&type=all`,
+            {
+                headers: {
+                    'Accept': 'application/vnd.github+json'
+                }
+            }
         );
         if (!response.ok) throw new Error('GitHub API failed');
         const repos = await response.json();
 
-        // Filter: 1. Not portfolio repo. 2. Must have 'public' in topics.
-        const filteredRepos = repos.filter(repo =>
-            repo.name !== `${username}.github.io` &&
-            repo.topics && repo.topics.includes('public')
-        );
+        // Filter: not portfolio repo, not forks, and (optionally) must have description for a cleaner portfolio
+        const filteredRepos = repos
+            .filter(repo => repo.name !== `${username}.github.io`)
+            .filter(repo => !repo.fork)
+            .filter(repo => Boolean(repo.description));
 
-        // Sort by Stars (Descending)
-        filteredRepos.sort((a, b) => b.stargazers_count - a.stargazers_count);
+        // Clear existing static projects if any (already done in DOMContentLoaded, but good practice here if re-running)
+        // projectsGrid.innerHTML = ''; // removed to avoid clearing if called multiple times incorrectly, handled by caller
 
-        // Display matching projects
-        filteredRepos.forEach(repo => {
+        // Display a curated set (most recently updated)
+        filteredRepos.slice(0, 12).forEach(repo => {
             createProjectCard(repo.name, repo, projectsGrid);
         });
 
@@ -336,19 +297,18 @@ function createProjectCard(repoName, repo, container) {
     // Use GitHub description
     const description = repo?.description || 'No description available.';
 
-    // Filter Tags: Include ALL tags EXCEPT 'public' and 'demo'
-    // Also include language if not already in topics
-    let displayTags = [];
+    // Tags: include language + ALL topics (deduped, no slicing)
+    const displayTags = [];
+    const seenTags = new Set();
+    const addTag = (tag) => {
+        const normalized = String(tag).trim().toLowerCase();
+        if (!normalized || seenTags.has(normalized)) return;
+        seenTags.add(normalized);
+        displayTags.push(String(tag).trim());
+    };
 
-    if (repo?.topics) {
-        const excludedTags = ['public', 'demo'];
-        displayTags = repo.topics.filter(tag => !excludedTags.includes(tag));
-    }
-
-    // Add primary language if it's not in the filtered topics (case-insensitive check)
-    if (repo?.language && !displayTags.some(t => t.toLowerCase() === repo.language.toLowerCase())) {
-        displayTags.unshift(repo.language);
-    }
+    if (repo?.language) addTag(repo.language);
+    if (Array.isArray(repo?.topics)) repo.topics.forEach(addTag);
 
     const tagsHtml = displayTags.map(tag => `<span>${tag}</span>`).join('');
 
@@ -363,20 +323,11 @@ function createProjectCard(repoName, repo, container) {
         ? `<div class="project-star">⭐ ${repo.stargazers_count}</div>`
         : '';
 
-    // Creation Date
-    const creationDate = repo?.created_at
-        ? new Date(repo.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-        : '';
-    const dateHtml = creationDate ? `<span class="project-date" style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-bottom: 0.5rem;">${creationDate}</span>` : '';
-
     card.innerHTML = `
         ${starHtml}
         ${imageHtml}
         <div class="project-content">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <h3>${displayName}</h3>
-                ${dateHtml}
-            </div>
+            <h3>${displayName}</h3>
             <p>${description}</p>
             <div class="project-tags">
                 ${tagsHtml}
