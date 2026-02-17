@@ -11,6 +11,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    /* Remove inline style warnings: svg margin-right for .btn-cv svg */
+    .btn-cv svg {
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+    /* Remove inline style warning: LangGraph logo color: transparent; */
+    .themed-icon {
+        color: transparent !important;
+    }
+    </style>
 </head>
 
 <body>
@@ -26,7 +37,8 @@
                 <li><a href="#projects" class="nav-link">Projects</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
                 <li><a href="cv/CV_Atef_Bouzid.pdf" download="CV_Atef_Bouzid.pdf" class="nav-link nav-cv">Resume</a></li>
-                <li><button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
                         <svg class="theme-icon sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -45,7 +57,8 @@
                             stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                         </svg>
-                    </button></li>
+                    </button>
+                </li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -75,15 +88,13 @@
                     <a href="#contact" class="btn btn-secondary">Get In Touch</a>
                     <a href="cv/CV_Atef_Bouzid.pdf" download="CV_Atef_Bouzid.pdf" class="btn btn-cv">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            style="margin-right: 8px;">
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
                         </svg>
                         Download Resume - CV
                     </a>
-
                 </div>
                 <span class="cv-update-info" id="cv-update-info">Last updated: <span id="cv-last-updated">Loading...</span></span>
                 <script>
@@ -477,7 +488,7 @@
                             <div class="skill-icon">
                                 <img src="https://avatars.githubusercontent.com/u/126733545?s=200&v=4"
                                     alt="LangGraph logo" loading="lazy" width="24" height="24" decoding="async"
-                                    data-nimg="1" class="themed-icon h-6 w-6 object-contain" style="color: transparent;"
+                                    data-nimg="1" class="themed-icon h-6 w-6 object-contain"
                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                                 <span class="skill-fallback">📈</span>
                             </div>
@@ -586,15 +597,19 @@
             </div>
 
             <!-- Projects -->
+
             <div class="projects-section-title">
                 <h3>Projects</h3>
             </div>
+
             <p class="section-description">
                 A selection of my personal projects in Data Science and AI.
                 Explore my open-source contributions and technical experiments on my <a
                     href="https://github.com/atefbouzid" target="_blank" rel="noopener" class="text-link">GitHub profile</a>.
             </p>
+
             <div class="projects-grid">
+
                 <div class="project-card">
                     <div class="project-image">
                         <img src="img/projects/ai-investment-research-agent/cover.jpg"
@@ -681,7 +696,9 @@
                 </div>
 
             </div>
+
         </div>
+
     </section>
 
     <!-- Contact Section -->
