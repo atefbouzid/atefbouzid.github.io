@@ -410,12 +410,12 @@ function createProjectCard(repoName, repo, container) {
 
 function getRandomGradient(name) {
     const colors = [
-        ['#ef4444', '#f87171'],
-        ['#3b82f6', '#60a5fa'],
-        ['#10b981', '#34d399'],
-        ['#f59e0b', '#fbbf24'],
-        ['#8b5cf6', '#a78bfa'],
-        ['#ec4899', '#f472b6']
+        ['#1DB954', '#1ed760'],
+        ['#15803d', '#22c55e'],
+        ['#059669', '#34d399'],
+        ['#0d9488', '#2dd4bf'],
+        ['#047857', '#10b981'],
+        ['#166534', '#4ade80']
     ];
     // Use name hash to pick consistent color
     let hash = 0;
