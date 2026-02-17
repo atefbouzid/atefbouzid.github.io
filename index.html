@@ -85,7 +85,25 @@
                     </a>
 
                 </div>
-                <span class="cv-update-info">Last updated: Jan 2025</span>
+                <span class="cv-update-info" id="cv-update-info">Last updated: <span id="cv-last-updated">Loading...</span></span>
+                <script>
+                // Fetch last-modified date of the CV file and update the text
+                fetch('cv/CV_Atef_Bouzid.pdf', { method: 'HEAD' })
+                  .then(response => {
+                    const lastModified = response.headers.get('last-modified');
+                    if (lastModified) {
+                      const date = new Date(lastModified);
+                      // Format as "Month YYYY"
+                      const formatted = date.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+                      document.getElementById('cv-last-updated').textContent = formatted;
+                    } else {
+                      document.getElementById('cv-last-updated').textContent = 'Unavailable';
+                    }
+                  })
+                  .catch(() => {
+                    document.getElementById('cv-last-updated').textContent = 'Unavailable';
+                  });
+                </script>
             </div>
             <div class="hero-image">
                 <div class="profile-image">
@@ -133,7 +151,7 @@
                 <!-- VINCI -->
                 <div class="experience-item">
                     <div class="experience-left">
-                        <h4 class="company-name">VINCI Group</h4>
+                        <h4 class="company-name">VINCI</h4>
                         <div class="experience-date">01/2026 – 03/2026</div>
                         <div class="company-location">Paris, France</div>
                     </div>
@@ -143,7 +161,14 @@
                     <div class="experience-right">
                         <h3 class="role-title">Data Scientist - Capstone Project</h3>
                         <div class="role-details">
-                            <p>Capstone Project focused on advanced data science applications.</p>
+                            <ul>
+                                <li>
+                                    Built an end-to-end AI pipeline for automated country risk reports (LLMs + RAG) — from web scraping and data processing to retrieval, generation, and analyst validation via a Streamlit app — cutting manual research and writing effort significantly.
+                                </li>
+                                <li>
+                                    Deployed on Azure (Azure OpenAI, Blob Storage, Cosmos DB) with secure REST APIs, delivering a scalable, production-ready solution.
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
